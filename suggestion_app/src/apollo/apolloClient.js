@@ -1,16 +1,13 @@
-// src/apollo/apolloClient.js
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
+// src/apolloClient.js
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import { provideApolloClient } from '@vue/apollo-composable';
 
-// HTTP connection to the API
-const httpLink = createHttpLink({
-    uri: 'http://localhost:8080/graphql', // 确保这个 URL 是你的 GraphQL 服务的地址
+const httpLink = new HttpLink({
+    uri: 'http://localhost:8080/graphql', // GraphQL 服务器的 URI
 });
 
-// Cache implementation
 const cache = new InMemoryCache();
 
-// Create the Apollo client
 const apolloClient = new ApolloClient({
     link: httpLink,
     cache,
@@ -18,4 +15,4 @@ const apolloClient = new ApolloClient({
 
 provideApolloClient(apolloClient);
 
-export { apolloClient };
+export default apolloClient;

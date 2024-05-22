@@ -82,14 +82,13 @@ export default {
 
     const selectSuggestion = async (suggestion) => {
       selectedState.value = suggestion;
-      // 获取选中州的位置信息并更新地图
       try {
         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${suggestion}&key=AIzaSyBGwpPV5hA426DStnuSRuETyYuj6x2Ix-s`);
         if (response.data.status === 'OK' && response.data.results.length > 0) {
           const location = response.data.results[0].geometry.location;
           map.value.setCenter(location);
           if (marker.value) {
-            marker.value.setMap(null); // 移除旧的标记
+            marker.value.setMap(null); 
           }
           marker.value = new window.google.maps.Marker({
             position: location,
