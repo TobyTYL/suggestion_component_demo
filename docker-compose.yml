@@ -1,4 +1,5 @@
-version: '3.1'
+version: '3.8'
+
 services:
   mongo:
     image: mongo:latest
@@ -26,4 +27,4 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/state_suggestion
     volumes:
-      - ./backend:/app  # Ensure this path matches your structure
+      - ./backend:/app 
