@@ -1,26 +1,35 @@
-# 使用 Go 语言 1.19 镜像作为基础镜像
-FROM golang:1.19
+# Use the official Golang image to create a build artifact.
+FROM golang:1.19-alpine AS builder
 
-# 更新包列表并安装 git
-RUN apt-get update && apt-get install -y git
+# Install Git.
+RUN apk add --no-cache git
 
-# 设置工作目录
+# Create and change to the app directory.
 WORKDIR /app
 
-# 将 go.mod 和 go.sum 复制到工作目录
-COPY ./backend/go.mod ./backend/go.sum ./
+# Copy go mod and sum files.
+COPY backend/go.mod backend/go.sum ./
 
-# 下载依赖
+# Download dependencies.
 RUN go mod download
 
-# 复制整个项目到工作目录
-COPY ./backend/ .
+# Copy the source code.
+COPY backend/ .
 
-# 构建 Go 应用程序
+# Build the application.
 RUN go build -o main .
 
-# 暴露应用程序端口
+# Use a smaller base image for the final build.
+FROM alpine:3.15
+
+# Install ca-certificates.
+RUN apk add --no-cache ca-certificates
+
+# Copy the binary from the builder stage.
+COPY --from=builder /app/main /main
+
+# Expose port 8080.
 EXPOSE 8080
 
-# 运行可执行文件
-CMD ["./main"]
+# Command to run the executable.
+CMD ["/main"]
