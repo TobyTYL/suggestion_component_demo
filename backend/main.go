@@ -7,7 +7,7 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
-	"github.com/rs/cors" // 导入 CORS 包
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -47,15 +47,12 @@ var schema, _ = graphql.NewSchema(graphql.SchemaConfig{
 })
 
 func main() {
-	// 设置 MongoDB 客户端选项
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
-	// 连接到 MongoDB
 	var err error
 	client, err = mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// 检查连接
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
