@@ -82,8 +82,8 @@ func main() {
 
 	http.Handle("/graphql", corsHandler)
 
-	log.Println("Server is running on port 8080")
-	http.ListenAndServe(":8080", nil)
+	log.Println("Server is running on port 8081")
+	http.ListenAndServe(":8081", nil)
 }
 
 func fetchStates(query string) ([]map[string]interface{}, error) {
