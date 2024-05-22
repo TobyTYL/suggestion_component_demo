@@ -26,4 +26,4 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/state_suggestion
     volumes:
-      - ./server:/app  # 将 server 文件夹挂载到容器内
+      - ./backend:/app  # 将 backend 文件夹挂载到容器内
