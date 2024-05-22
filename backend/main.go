@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -50,6 +51,8 @@ var schema, _ = graphql.NewSchema(graphql.SchemaConfig{
 func main() {
 	// 从环境变量中获取 MongoDB URI
 	mongoURI := os.Getenv("MONGO_URI")
+	fmt.Println("MONGO_URI:", mongoURI) // 添加调试信息
+
 	if mongoURI == "" {
 		log.Fatal("MONGO_URI environment variable is required")
 	}
