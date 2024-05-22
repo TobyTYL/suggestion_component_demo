@@ -32,11 +32,12 @@
 </template>
 
 <script>
+// Above is the template section of the component
 import { ref, watch, onMounted, watchEffect } from 'vue';
 import { useQuery } from '@vue/apollo-composable';
 import gql from 'graphql-tag';
 import axios from 'axios';
-
+// Below is the script section of the component
 export default {
   name: 'StateTypeahead',
   setup() {
@@ -53,9 +54,9 @@ export default {
         }
       }
     `;
-
+    // Fetch states query
     const { result, loading, error, refetch } = useQuery(FETCH_STATES, () => ({ query: query.value }), { fetchPolicy: 'no-cache' });
-
+    // Fetch suggestions
     const fetchSuggestions = () => {
       if (!query.value) {
         suggestions.value = [];
@@ -65,31 +66,31 @@ export default {
         suggestions.value = result.value.states.map(state => state.name);
       }
     };
-
+// Watch for query changes
     watch(query, async (newQuery) => {
       if (newQuery) {
-        await refetch(); // 重新执行查询
+        await refetch(); 
       } else {
         suggestions.value = [];
       }
     });
-
+    // Watch for loading changes, when user stops typing
     watchEffect(() => {
       if (!loading.value) {
-        fetchSuggestions(); // 更新建议
+        fetchSuggestions(); 
       }
     });
-
+    // Select suggestion
     const selectSuggestion = async (suggestion) => {
       selectedState.value = suggestion;
-      // 获取选中州的位置信息并更新地图
       try {
+        // api: AIzaSyBGwpPV5hA426DStnuSRuETyYuj6x2Ix-s
         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${suggestion}&key=AIzaSyBGwpPV5hA426DStnuSRuETyYuj6x2Ix-s`);
         if (response.data.status === 'OK' && response.data.results.length > 0) {
           const location = response.data.results[0].geometry.location;
           map.value.setCenter(location);
           if (marker.value) {
-            marker.value.setMap(null); // 移除旧的标记
+            marker.value.setMap(null);
           }
           marker.value = new window.google.maps.Marker({
             position: location,
@@ -102,21 +103,20 @@ export default {
         console.error('Error fetching location:', error);
       }
     };
-
+    // Load Google Maps
     const loadGoogleMaps = (callback) => {
       const existingScript = document.getElementById('googleMaps');
-
+      // Load script if it doesn't exist
       if (!existingScript) {
         const script = document.createElement('script');
+        // api: AIzaSyBGwpPV5hA426DStnuSRuETyYuj6x2Ix-s
         script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBGwpPV5hA426DStnuSRuETyYuj6x2Ix-s`;
         script.id = 'googleMaps';
         document.body.appendChild(script);
-
         script.onload = () => {
           console.log('Google Maps script loaded successfully.');
           if (callback) callback();
         };
-
         script.onerror = () => {
           console.error('Error loading Google Maps script.');
         };
@@ -124,7 +124,8 @@ export default {
         if (callback) callback();
       }
     };
-
+    
+    // Initialize map
     onMounted(() => {
       const mapContainer = document.getElementById('map');
       if (mapContainer) {
