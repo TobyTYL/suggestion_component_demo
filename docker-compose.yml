@@ -9,3 +9,21 @@ services:
       MONGO_INITDB_DATABASE: state_suggestion
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  go_server:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/state_suggestion
+    volumes:
+      - ./server:/app  # 将 server 文件夹挂载到容器内

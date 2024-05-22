@@ -4,10 +4,11 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
-	"github.com/rs/cors" // 导入 CORS 包
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -47,8 +48,14 @@ var schema, _ = graphql.NewSchema(graphql.SchemaConfig{
 })
 
 func main() {
+	// 从环境变量中获取 MongoDB URI
+	mongoURI := os.Getenv("MONGO_URI")
+	if mongoURI == "" {
+		log.Fatal("MONGO_URI environment variable is required")
+	}
+
 	// 设置 MongoDB 客户端选项
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI(mongoURI)
 	// 连接到 MongoDB
 	var err error
 	client, err = mongo.Connect(context.Background(), clientOptions)
